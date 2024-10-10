@@ -36,11 +36,6 @@ jobs:
         run: |
           ls -al
 
-      - name: Check Directory
-        run: |
-          cd ..
-          ls -al
-
       - name: Apt Update
         env:
           DEBIAN_FRONTEND: noninteractive
@@ -50,7 +45,6 @@ jobs:
 
       - name: Install OpenWrt SDK
         run: |
-          cd ..
           mkdir tmp
           curl -SLk --connect-timeout 30 --retry 2 "https://archive.openwrt.org/chaos_calmer/15.05.1/ar71xx/generic/OpenWrt-SDK-15.05.1-ar71xx-generic_gcc-4.8-linaro_uClibc-0.9.33.2.Linux-x86_64.tar.bz2" -o "./tmp/SDK.tar.bz2"
           cd \tmp
@@ -59,13 +53,11 @@ jobs:
 
       - name: Copy OpenClash Source Codes
         run: |
-          cd ..
           mkdir tmp/SDK/package/luci-app-openclash
           cp -rf "./OpenClash/luci-app-openclash/." "./tmp/SDK/package/luci-app-openclash/"
 
       - name: Compile po2lmo
         run: |
-          cd ..
           cd tmp/SDK/package/
           pushd luci-app-openclash/tools/po2lmo
           make && sudo make install
@@ -73,14 +65,12 @@ jobs:
 
       - name: Compile OpenClash IPK
         run: |
-          cd ..
           cd tmp/SDK
           make package/luci-app-openclash/compile V=99
 
       - name: Move New version
         run: |
           rm -rf ./dev/luci-app-openclash_*
-          cd ..
           cp "./tmp/SDK/bin/ar71xx/packages/base/luci-app-openclash_${{ needs.GetLastChange.outputs.lastChange }}-dev_all.ipk" "./OpenClash/dev/luci-app-openclash_${{ needs.GetLastChange.outputs.lastChange }}-dev_all.ipk"
 
       - name: Release New version
