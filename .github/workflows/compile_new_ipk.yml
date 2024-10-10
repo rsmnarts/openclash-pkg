@@ -3,7 +3,7 @@ name: Compile The New version OpenClash
 on:
   workflow_dispatch:
   schedule:
-    - cron: "0 0 * * *"
+    - cron: '0 0 * * *'
 
 jobs:
   GetLastChange:
@@ -13,6 +13,12 @@ jobs:
       lastReleaseTag: ${{ steps.GetLastChange.outputs.lastReleaseTag }}
       version: ${{ steps.GetLastChange.outputs.version }}
     steps:
+      - name: Clone Main Repository
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.ref_name }}
+          path: openclash-pkg
+
       - name: Clone OpenClash dev Repository
         uses: actions/checkout@v4
         with:
@@ -20,23 +26,18 @@ jobs:
           ref: dev
           path: OpenClash
 
-      - name: Clone Main Repository
-        uses: actions/checkout@v4
-        with:
-          ref: ${{ github.ref_name }}
-          path: openclash-pkg
-
       - name: Get Last Change
         id: GetLastChange
         run: |
-          cd OpenClash
+          cd openclash-pkg
+          echo "lastReleaseTag=$(git describe --tags  | awk -F- '{print substr($1, 2)}')" >> $GITHUB_OUTPUT
+          echo "Last Tag: $(git describe --tags)"
+          echo "Last Release Tag: $(git describe --tags | awk -F- '{print substr($1, 2)}')"
+          cd ../OpenClash
           echo "lastChange=$(git log -1 --pretty=format:"%h")" >> $GITHUB_OUTPUT
           echo "Last Change: $(git log -1 --pretty=format:"%h")"
           echo "version=$(grep 'PKG_VERSION:=' ./luci-app-openclash/Makefile |awk -F '=' '{print $2}')" >> $GITHUB_OUTPUT
           echo "New Version: $(grep 'PKG_VERSION:=' ./luci-app-openclash/Makefile |awk -F '=' '{print $2}')"
-          cd ../openclash-pkg
-          echo "lastReleaseTag=$(git describe --tags  | awk -F- '{print substr($1, 2)}')" >> $GITHUB_OUTPUT
-          echo "Last Release Tag: $(git describe --tags | awk -F- '{print substr($1, 2)}')"
 
   Compile:
     runs-on: ubuntu-latest
@@ -56,7 +57,6 @@ jobs:
         run: |
           sudo apt-get update
           sudo apt-get -y install curl git tar
-
 
       - name: Install OpenWrt SDK
         run: |
@@ -97,4 +97,4 @@ jobs:
         with:
           prerelease: true
           files: './out/luci-app-openclash_*.ipk'
-          tag_name: "v${{ needs.GetLastChange.outputs.lastChange }}-dev"
+          tag_name: 'v${{ needs.GetLastChange.outputs.lastChange }}-dev'
