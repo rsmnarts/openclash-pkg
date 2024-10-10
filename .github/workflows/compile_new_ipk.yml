@@ -82,3 +82,4 @@ jobs:
         with:
           prerelease: true
           files: './out/luci-app-openclash_*.ipk'
+          tag_name: "v${{ github.event.inputs.date || github.run_id }}-dev"
