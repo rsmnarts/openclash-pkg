@@ -7,7 +7,7 @@ jobs:
   GetLastChange:
     runs-on: ubuntu-latest
     outputs:
-      last_change: ${{ steps.GetLastChange.outputs.last_change }}
+      lastChange: ${{ steps.GetLastChange.outputs.lastChange }}
       version: ${{ steps.GetLastChange.outputs.version }}
     steps:
       - name: Clone OpenClash dev Repository
@@ -19,7 +19,7 @@ jobs:
       - name: Get Last Change
         id: GetLastChange
         run: |
-          echo "last_change=$(git log -1 --pretty=format:"%h")" >> $GITHUB_ENV
+          echo "lastChange=$(git log -1 --pretty=format:"%h")" >> $GITHUB_OUTPUT
           echo "Last Change: $(git log -1 --pretty=format:"%h")"
           echo "version=$(grep 'PKG_VERSION:=' ./luci-app-openclash/Makefile |awk -F '=' '{print $2}')" >> $GITHUB_OUTPUT
           echo "New Version: $(grep 'PKG_VERSION:=' ./luci-app-openclash/Makefile |awk -F '=' '{print $2}')"
@@ -72,7 +72,7 @@ jobs:
         run: |
           rm -rf ./dev/luci-app-openclash_*
           ls -al ./tmp/SDK/bin/ar71xx/packages/base/
-          cp "./tmp/SDK/bin/ar71xx/packages/base/luci-app-openclash_${{ needs.GetLastChange.outputs.version }}-beta_all.ipk" "./OpenClash/dev/luci-app-openclash_${{ needs.GetLastChange.outputs.last_change }}-dev_all.ipk"
+          cp "./tmp/SDK/bin/ar71xx/packages/base/luci-app-openclash_${{ needs.GetLastChange.outputs.version }}-beta_all.ipk" "./OpenClash/dev/luci-app-openclash_${{ needs.GetLastChange.outputs.lastChange }}-dev_all.ipk"
 
       - name: Release New version
         uses: softprops/action-gh-release@v2
