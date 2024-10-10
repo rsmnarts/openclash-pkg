@@ -4,10 +4,10 @@ on:
   workflow_dispatch:
 
 jobs:
-  getLastChange:
+  GetLastChange:
     runs-on: ubuntu-latest
     outputs:
-      lastChange: ${{ steps.getLastChange.outputs.lastChange }}
+      lastChange: ${{ steps.GetLastChange.outputs.lastChange }}
     steps:
       - name: Clone OpenClash dev Repository
         uses: actions/checkout@v4
@@ -16,19 +16,20 @@ jobs:
           ref: dev
 
       - name: Get Last Change
-        id: getLastChange
+        id: GetLastChange
         run: |
           echo "lastChange=$(git log -1 --pretty=format:"%h")" >> $GITHUB_ENV
           echo "Last Change: $(git log -1 --pretty=format:"%h")"
 
   Compile:
     runs-on: ubuntu-latest
-    needs: getLastChange
+    needs: GetLastChange
     steps:
       - name: Clone OpenClash dev Repository
         uses: actions/checkout@v4
         with:
-          ref: ${{ github.ref_name }}
+          repository: 'vernesong/OpenClash'
+          ref: dev
 
       - name: Apt Update
         env:
@@ -68,9 +69,9 @@ jobs:
 
       - name: Move New version
         run: |
-          rm -rf ./${{ github.ref_name }}/luci-app-openclash_*
+          rm -rf ./dev/luci-app-openclash_*
           cd ..
-          cp "./tmp/SDK/bin/ar71xx/packages/base/luci-app-openclash_${{ needs.getLastChange.outputs.lastChange }}-dev_all.ipk" "./OpenClash/${{ github.ref_name }}/luci-app-openclash_${{ needs.getLastChange.outputs.lastChange }}-dev_all.ipk"
+          cp "./tmp/SDK/bin/ar71xx/packages/base/luci-app-openclash_${{ needs.GetLastChange.outputs.lastChange }}-dev_all.ipk" "./OpenClash/dev/luci-app-openclash_${{ needs.GetLastChange.outputs.lastChange }}-dev_all.ipk"
 
       - name: Release New version
         uses: softprops/action-gh-release@v2
@@ -78,4 +79,4 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.REPO_TOKEN }}
         with:
           prerelease: true
-          files: "./dev/luci-app-openclash_*.ipk"
+          files: './dev/luci-app-openclash_*.ipk'
