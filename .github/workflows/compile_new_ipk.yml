@@ -46,6 +46,7 @@ jobs:
           sudo apt-get update
           sudo apt-get -y install curl git tar
 
+
       - name: Install OpenWrt SDK
         run: |
           mkdir tmp
@@ -74,8 +75,8 @@ jobs:
       - name: Move New version
         run: |
           rm -rf ./dev/luci-app-openclash_*
-          ls -al
-          cp "./tmp/SDK/bin/ar71xx/packages/base/luci-app-openclash_${{ needs.GetLastChange.outputs.version }}-dev_all.ipk" "./OpenClash/dev/luci-app-openclash_${{ needs.GetLastChange.outputs.lastChange }}-dev_all.ipk"
+          ls -al ./tmp/SDK/bin/ar71xx/packages/base/
+          cp "./tmp/SDK/bin/ar71xx/packages/base/luci-app-openclash_${{ needs.GetLastChange.outputs.version }}-beta_all.ipk" "./OpenClash/dev/luci-app-openclash_${{ needs.GetLastChange.outputs.lastChange }}-dev_all.ipk"
 
       - name: Release New version
         uses: softprops/action-gh-release@v2
