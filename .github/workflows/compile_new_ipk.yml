@@ -31,6 +31,10 @@ jobs:
           repository: 'vernesong/OpenClash'
           ref: dev
 
+      - name: Check Directory
+        run: |
+          ls -al
+
       - name: Apt Update
         env:
           DEBIAN_FRONTEND: noninteractive
