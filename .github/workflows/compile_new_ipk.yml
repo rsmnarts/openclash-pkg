@@ -13,31 +13,22 @@ jobs:
       lastReleaseTag: ${{ steps.GetLastChange.outputs.lastReleaseTag }}
       version: ${{ steps.GetLastChange.outputs.version }}
     steps:
-      - name: Clone Main Repository
-        uses: actions/checkout@v4
-        with:
-          ref: ${{ github.ref_name }}
-          path: openclash-pkg
-
       - name: Clone OpenClash dev Repository
         uses: actions/checkout@v4
         with:
           repository: 'vernesong/OpenClash'
           ref: dev
-          path: OpenClash
 
       - name: Get Last Change
         id: GetLastChange
         run: |
-          cd openclash-pkg
-          echo "lastReleaseTag=$(git describe --tags  | awk -F- '{print substr($1, 2)}')" >> $GITHUB_OUTPUT
-          echo "Last Tag: $(git describe --tags)"
-          echo "Last Release Tag: $(git describe --tags | awk -F- '{print substr($1, 2)}')"
-          cd ../OpenClash
-          echo "lastChange=$(git log -1 --pretty=format:"%h")" >> $GITHUB_OUTPUT
-          echo "Last Change: $(git log -1 --pretty=format:"%h")"
-          echo "version=$(grep 'PKG_VERSION:=' ./luci-app-openclash/Makefile |awk -F '=' '{print $2}')" >> $GITHUB_OUTPUT
-          echo "New Version: $(grep 'PKG_VERSION:=' ./luci-app-openclash/Makefile |awk -F '=' '{print $2}')"
+          lastReleaseTag=$(curl -s https://api.github.com/repos/${{ github.repository }}/releases | jq -r '.[].tag_name' | awk -F- '{print substr($1, 2)}')
+          lastChange=$(git log -1 --pretty=format:"%h")
+          version=$(grep 'PKG_VERSION:=' ./luci-app-openclash/Makefile | awk -F '=' '{print $2}')
+          echo "lastReleaseTag=$lastReleaseTag" >> $GITHUB_OUTPUT
+          echo "lastChange=$lastChange" >> $GITHUB_OUTPUT
+          echo "version=$version" >> $GITHUB_OUTPUT
+          echo $GITHUB_OUTPUT
 
   Compile:
     runs-on: ubuntu-latest
