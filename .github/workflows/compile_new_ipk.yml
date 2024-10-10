@@ -30,7 +30,16 @@ jobs:
         with:
           repository: 'vernesong/OpenClash'
           ref: dev
-          path: './OpenClash'
+          path: OpenClash
+
+      - name: Check Directory
+        run: |
+          ls -al
+
+      - name: Check Directory
+        run: |
+          cd ..
+          ls -al
 
       - name: Apt Update
         env:
