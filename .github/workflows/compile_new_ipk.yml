@@ -22,7 +22,7 @@ jobs:
       - name: Get Last Change
         id: GetLastChange
         run: |
-          lastReleaseTag=$(curl -s https://api.github.com/repos/${{ github.repository }}/releases | jq -r '.[].tag_name' | awk -F- '{print substr($1, 2)}')
+          lastReleaseTag=$(curl -s https://api.github.com/repos/${{ github.repository }}/releases | jq -r '.[0].tag_name' | awk -F- '{print substr($1, 2)}')
           lastChange=$(git log -1 --pretty=format:"%h")
           version=$(grep 'PKG_VERSION:=' ./luci-app-openclash/Makefile | awk -F '=' '{print $2}')
           echo "lastReleaseTag=$lastReleaseTag" >> $GITHUB_OUTPUT
@@ -34,6 +34,8 @@ jobs:
     runs-on: ubuntu-latest
     needs: GetLastChange
     if: ${{ needs.GetLastChange.outputs.lastChange != needs.GetLastChange.outputs.lastReleaseTag }}
+    env:
+      NOW: ''
     steps:
       - name: Clone OpenClash dev Repository
         uses: actions/checkout@v4
@@ -81,6 +83,9 @@ jobs:
           mkdir out
           mv "./tmp/SDK/bin/ar71xx/packages/base/luci-app-openclash_${{ needs.GetLastChange.outputs.version }}-beta_all.ipk" "./out/luci-app-openclash_${{ needs.GetLastChange.outputs.lastChange }}-dev_all.ipk"
 
+      - name: Get Current Date
+        run: echo "NOW=$(date +'%Y-%m-%d')" >> $GITHUB_ENV
+
       - name: Release New version
         uses: softprops/action-gh-release@v2
         env:
@@ -88,4 +93,8 @@ jobs:
         with:
           prerelease: true
           files: './out/luci-app-openclash_*.ipk'
-          tag_name: 'v${{ needs.GetLastChange.outputs.lastChange }}-dev'
+          tag_name: 'v${{ env.NOW }}-${{ needs.GetLastChange.outputs.lastChange }}-dev'
+          body: |
+            Changes since last release:
+            - Commit: ${{ needs.GetLastChange.outputs.lastChange }}
+            - Version: ${{ needs.GetLastChange.outputs.version }}
