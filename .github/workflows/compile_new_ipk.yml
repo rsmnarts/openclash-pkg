@@ -26,7 +26,7 @@ jobs:
       - name: Get Last Change
         id: GetLastChange
         run: |
-          lastReleaseChange=$(curl -s https://api.github.com/repos/${{ github.repository }}/releases | jq -r '.[0].tag_name' | awk -F- '{print substr($1, 2)}')
+          lastReleaseChange=$(curl -s https://api.github.com/repos/${{ github.repository }}/releases | jq -r '.[0].tag_name' | awk -F'-' '{print $2}')
           currentChange=$(git log -1 --pretty=format:"%h")
           version=$(grep 'PKG_VERSION:=' ./luci-app-openclash/Makefile | awk -F '=' '{print $2}')
           echo "lastReleaseChange=$lastReleaseChange" >> $GITHUB_OUTPUT
@@ -103,7 +103,8 @@ jobs:
             Changes since last release:
             - Commit: ${{ needs.GetLastChange.outputs.currentChange }}
             - Version: ${{ needs.GetLastChange.outputs.version }}
-            - Diff:
+            - Full Changes: [here](https://github.com/vernesong/OpenClash/compare/${{ needs.GetLastChange.outputs.lastReleaseChange }}..HEAD)
+            - Changes:
             ```
             ${{ needs.GetLastChange.outputs.gitdiff }}
             ```
