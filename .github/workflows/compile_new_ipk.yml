@@ -81,15 +81,15 @@ jobs:
           cd tmp/SDK
           make package/luci-app-openclash/compile V=99
 
+      - name: Get Current Date
+        run: echo "NOW=$(date +'%Y%m%d')" >> $GITHUB_ENV
+
       - name: Move New version
         run: |
           rm -rf ./out/luci-app-openclash_*
           ls -al ./tmp/SDK/bin/ar71xx/packages/base/
           mkdir out
-          mv "./tmp/SDK/bin/ar71xx/packages/base/luci-app-openclash_${{ needs.GetLastChange.outputs.version }}-beta_all.ipk" "./out/luci-app-openclash_${{ needs.GetLastChange.outputs.currentChange }}-dev_all.ipk"
-
-      - name: Get Current Date
-        run: echo "NOW=$(date +'%Y%m%d')" >> $GITHUB_ENV
+          mv "./tmp/SDK/bin/ar71xx/packages/base/luci-app-openclash_${{ needs.GetLastChange.outputs.version }}-beta_all.ipk" "./out/luci-app-openclash_${{ env.NOW }}-${{ needs.GetLastChange.outputs.currentChange }}-dev_all.ipk"
 
       - name: Release New version
         uses: softprops/action-gh-release@v2
