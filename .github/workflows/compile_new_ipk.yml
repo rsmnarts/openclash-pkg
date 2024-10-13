@@ -14,6 +14,7 @@ jobs:
     outputs:
       currentChange: ${{ steps.GetLastChange.outputs.currentChange }}
       lastReleaseChange: ${{ steps.GetLastChange.outputs.lastReleaseChange }}
+      lastReleaseChange: ${{ steps.GetLastChange.outputs.lastReleaseChange }}
       version: ${{ steps.GetLastChange.outputs.version }}
       gitdiff: ${{ steps.GetLastChange.outputs.gitdiff }}
     steps:
@@ -32,7 +33,6 @@ jobs:
           echo "lastReleaseChange=$lastReleaseChange" >> $GITHUB_OUTPUT
           echo "currentChange=$currentChange" >> $GITHUB_OUTPUT
           echo "version=$version" >> $GITHUB_OUTPUT
-          echo $GITHUB_OUTPUT
           echo "gitdiff=$(git diff --stat $lastReleaseChange..HEAD)" >> $GITHUB_OUTPUT
 
   Compile:
