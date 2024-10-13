@@ -100,5 +100,7 @@ jobs:
             Changes since last release:
             - Commit: ${{ needs.GetLastChange.outputs.currentChange }}
             - Version: ${{ needs.GetLastChange.outputs.version }}
-            - Diff: \n
+            - Diff:
+            ```
             ${{ needs.GetLastChange.outputs.gitdiff }}
+            ```
