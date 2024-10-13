@@ -14,7 +14,6 @@ jobs:
     outputs:
       currentChange: ${{ steps.GetLastChange.outputs.currentChange }}
       lastReleaseChange: ${{ steps.GetLastChange.outputs.lastReleaseChange }}
-      lastReleaseChange: ${{ steps.GetLastChange.outputs.lastReleaseChange }}
       version: ${{ steps.GetLastChange.outputs.version }}
       gitdiff: ${{ steps.GetLastChange.outputs.gitdiff }}
     steps:
