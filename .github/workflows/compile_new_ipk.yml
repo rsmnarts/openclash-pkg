@@ -87,7 +87,7 @@ jobs:
         run: |
           rm -rf ./out/luci-app-openclash_*
           ls -al ./tmp/SDK/bin/ar71xx/packages/base/
-          mkdir out
+          mkdir out≈
           mv "./tmp/SDK/bin/ar71xx/packages/base/luci-app-openclash_${{ needs.GetLastChange.outputs.version }}-beta_all.ipk" "./out/luci-app-openclash_${{ env.NOW }}-${{ needs.GetLastChange.outputs.currentChange }}-dev_all.ipk"
 
       - name: Release New version
@@ -107,3 +107,19 @@ jobs:
             ```
             ${{ needs.GetLastChange.outputs.gitdiff }}
             ```
+
+      - name: Upload to telegram
+        uses: appleboy/telegram-action@master
+        with:
+          to: ${{ secrets.TELEGRAM_TO }}
+          token: ${{ secrets.TELEGRAM_TOKEN }}
+          message: |
+            Changes since last release:
+            - Commit: ${{ needs.GetLastChange.outputs.currentChange }}
+            - Version: ${{ needs.GetLastChange.outputs.version }}
+            - Full Changes: [here](https://github.com/vernesong/OpenClash/compare/${{ needs.GetLastChange.outputs.lastReleaseChange }}..HEAD)
+            - Changes:
+            ```
+            ${{ needs.GetLastChange.outputs.gitdiff }}
+            ```
+          document: './out/luci-app-openclash_${{ env.NOW }}-${{ needs.GetLastChange.outputs.currentChange }}-dev_all.ipk'
