@@ -85,9 +85,9 @@ jobs:
 
       - name: Move New version
         run: |
+          mkdir out
           rm -rf ./out/luci-app-openclash_*
           ls -al ./tmp/SDK/bin/ar71xx/packages/base/
-          mkdir out≈
           mv "./tmp/SDK/bin/ar71xx/packages/base/luci-app-openclash_${{ needs.GetLastChange.outputs.version }}-beta_all.ipk" "./out/luci-app-openclash_${{ env.NOW }}-${{ needs.GetLastChange.outputs.currentChange }}-dev_all.ipk"
 
       - name: Release New version
