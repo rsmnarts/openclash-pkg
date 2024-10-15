@@ -113,13 +113,12 @@ jobs:
         with:
           to: ${{ secrets.TELEGRAM_TO }}
           token: ${{ secrets.TELEGRAM_TOKEN }}
+          disable_web_page_preview: true
           message: |
             Changes since last release:
             - Commit: ${{ needs.GetLastChange.outputs.currentChange }}
             - Version: ${{ needs.GetLastChange.outputs.version }}
-            - Full Changes: [here](https://github.com/vernesong/OpenClash/compare/${{ needs.GetLastChange.outputs.lastReleaseChange }}..HEAD)
+            - Full Changes: https://github.com/vernesong/OpenClash/compare/${{ needs.GetLastChange.outputs.lastReleaseChange }}..HEAD
             - Changes:
-            ```
             ${{ needs.GetLastChange.outputs.gitdiff }}
-            ```
           document: './out/luci-app-openclash_${{ env.NOW }}-${{ needs.GetLastChange.outputs.currentChange }}-dev_all.ipk'
