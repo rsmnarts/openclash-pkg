@@ -15,7 +15,6 @@ jobs:
       currentChange: ${{ steps.GetLastChange.outputs.currentChange }}
       lastReleaseChange: ${{ steps.GetLastChange.outputs.lastReleaseChange }}
       version: ${{ steps.GetLastChange.outputs.version }}
-      gitdiff: ${{ steps.GetLastChange.outputs.gitdiff }}
     steps:
       - name: Clone OpenClash dev Repository
         uses: actions/checkout@v4
@@ -32,7 +31,6 @@ jobs:
           echo "lastReleaseChange=$lastReleaseChange" >> $GITHUB_OUTPUT
           echo "currentChange=$currentChange" >> $GITHUB_OUTPUT
           echo "version=$version" >> $GITHUB_OUTPUT
-          echo "gitdiff=$(git diff --stat $lastReleaseChange..HEAD)" >> $GITHUB_OUTPUT
 
   Compile:
     runs-on: ubuntu-latest
@@ -103,10 +101,6 @@ jobs:
             - Commit: ${{ needs.GetLastChange.outputs.currentChange }}
             - Version: ${{ needs.GetLastChange.outputs.version }}
             - Full Changes: [here](https://github.com/vernesong/OpenClash/compare/${{ needs.GetLastChange.outputs.lastReleaseChange }}..HEAD)
-            - Changes:
-            ```
-            ${{ needs.GetLastChange.outputs.gitdiff }}
-            ```
 
       - name: Upload to telegram
         uses: appleboy/telegram-action@master
@@ -118,7 +112,5 @@ jobs:
             Changes since last release:
             - Commit: ${{ needs.GetLastChange.outputs.currentChange }}
             - Version: ${{ needs.GetLastChange.outputs.version }}
-            - Full Changes: https://github.com/vernesong/OpenClash/compare/${{ needs.GetLastChange.outputs.lastReleaseChange }}..HEAD
-            - Changes:
-            ${{ needs.GetLastChange.outputs.gitdiff }}
+            - Full Changes: https://github.com/vernesong/OpenClash/compare/${{ needs.GetLastChange.outputs.lastReleaseChange }}..dev
           document: './out/luci-app-openclash_${{ env.NOW }}-${{ needs.GetLastChange.outputs.currentChange }}-dev_all.ipk'
