@@ -100,7 +100,7 @@ jobs:
             Changes since last release:
             - Commit: ${{ needs.GetLastChange.outputs.currentChange }}
             - Version: ${{ needs.GetLastChange.outputs.version }}
-            - Full Changes: [here](https://github.com/vernesong/OpenClash/compare/${{ needs.GetLastChange.outputs.lastReleaseChange }}..HEAD)
+            - Full Changes: [here](https://github.com/vernesong/OpenClash/compare/${{ needs.GetLastChange.outputs.lastReleaseChange }}..dev)
 
       - name: Upload to telegram
         uses: appleboy/telegram-action@master
